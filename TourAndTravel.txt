@@ -1,0 +1,61 @@
+create Database TourandTravel;
+use TourandTravel
+create table FlightDetails( id int primary key identity,Name varchar(10),RouteFrom varchar(20),Routeto varchar(20))
+
+CREATE PROCEDURE 
+sp_flight 
+@name varchar(10),
+@Rfrom varchar(20) ,
+@Rto varchar(20)
+AS
+Begin
+insert into FlightDetails(name,RouteFrom,Routeto) values(@name,@Rfrom,@Rto)
+End
+
+exec sp_flight 
+@name    = 'indigo'               ,
+@Rfrom   = 'india'      ,
+@Rto         = 'dubai'    
+
+SELECT * FROM FlightDetails
+
+create table Customer( Cid int primary key identity(100,1),CName varchar(10),booking_id int not null,
+Constraint fk_flightid Foreign key(booking_id) References FlightDetails(id))
+
+
+CREATE PROCEDURE 
+sp_customer
+@name varchar(10),
+@id int
+AS
+Begin
+insert into Customer(CName,booking_id) values(@name,@id)
+End
+
+exec sp_customer
+@name    = 'yash singh'               ,
+@id		 =   2
+
+SELECT * FROM Customer
+delete from Customer where Cid=106
+
+create table ticket_booking(Tid numeric(6) primary key identity(00234,1),price numeric(7),Tbooking_id int not null,
+Constraint fk_ticketid Foreign key(Tbooking_id) References FlightDetails(id))
+
+CREATE PROCEDURE 
+sp_ticket
+@price numeric(7),
+@id int
+AS
+Begin
+insert into ticket_booking(price,Tbooking_id) values(@price,@id)
+End
+
+exec sp_ticket
+@price    = 25000               ,
+@id		 =   6
+
+SELECT * FROM ticket_booking
+--passenger name and their flight details
+
+select CName,Name,RouteFrom,Routeto  from FlightDetails as f inner join Customer as c on c.booking_id=f.id
